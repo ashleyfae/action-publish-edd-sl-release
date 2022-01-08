@@ -9,10 +9,6 @@ inputs:
     description: 'Relative path to your configuration file.'
     required: false
     default: 'edd-sl-release.json'
-outputs:
-  release-config:
-    description: 'Parsed release configuration.'
-    value: ${{ steps.parse-config.ouputs.release-config }}
 runs:
   using: 'composite'
   steps:
@@ -24,19 +20,10 @@ runs:
         composer-install: ${{ inputs.composer-install }}
 
     # Parse the release config.
-    - name: Parse release config
-      id: parse-config
-      shell: bash
-      run: |
-        JSON=$(cat ./${{ inputs.config-file }})
-        echo "::set-output name=release-config::${JSON//'%'/'%25'}"
-
     - name: Upload release
       env:
-        RELEASE_URL: ${{ fromJSON(steps.parse-config.outputs.release-config).url }}
-        RELEASE_VERSION: ${{ fromJSON(steps.parse-config.outputs.release-config).version }}
+        RELEASE_CONFIG: ${{ inputs.config-file }}
         PRE_RELEASE: ${{ github.event.release.pre_release }}
         RELEASE_ZIP: ${{ steps.create-zip.outputs.zip-path }}
-        RELEASE_REQUIREMENTS: ${{ fromJSON(steps.parse-config.outputs.release-config).requirements }}
       shell: bash
       run: ${{ github.action_path }}/release.sh

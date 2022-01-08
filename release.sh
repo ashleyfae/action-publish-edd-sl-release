@@ -10,6 +10,10 @@ if [[ -z "$WORDPRESS_PASS" ]]; then
   exit 1
 fi
 
+RELEASE_URL = jq '.url' ${RELEASE_CONFIG}
+RELEASE_VERSION = jq '.version' ${RELEASE_CONFIG}
+RELEASE_REQUIREMENTS = jq '.requirements' ${RELEASE_CONFIG}
+
 echo "Version ${RELEASE_VERSION} requirements: ${RELEASE_REQUIREMENTS}"
 
 echo "Deploying to ${RELEASE_URL}"
