@@ -1,0 +1,21 @@
+name: 'Publish EDD SL Release'
+description: 'Publishes a new EDD SL release.'
+inputs:
+  composer-install:
+    description: 'Whether to install composer dependencies.'
+    required: false
+    default: 'true'
+runs:
+  using: 'composite'
+  steps:
+    # Create zip file and attach to release.
+    - name: Create release zip
+      id: create-zip
+      uses: ashleyfae/action-build-release-zip@main
+      with:
+        composer-install: ${{ github.event.inputs.composer-install }}
+
+    # Do something else
+    - name: Publish release
+      shell: bash
+      run: echo "${{ steps.create-zip.outputs.zip-path }}"
