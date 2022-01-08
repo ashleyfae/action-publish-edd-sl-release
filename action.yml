@@ -25,5 +25,6 @@ runs:
         RELEASE_CONFIG: ${{ inputs.config-file }}
         PRE_RELEASE: ${{ github.event.release.pre_release }}
         RELEASE_ZIP: ${{ steps.create-zip.outputs.zip-path }}
+        RELEASE_FILE_NAME: ${{ steps.create-zip.outputs.file-name }}
       shell: bash
       run: ${{ github.action_path }}/release.sh
