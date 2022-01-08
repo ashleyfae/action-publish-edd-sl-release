@@ -35,7 +35,7 @@ runs:
       env:
         RELEASE_URL: ${{ steps.parse-config.outputs.release-config.url }}
         RELEASE_VERSION: ${{ steps.parse-config.outputs.release-config.version }}
-        PRE_RELEASE: ${{ github.event.repository.pre_release }
+        PRE_RELEASE: ${{ github.event.repository.pre_release }}
         RELEASE_ZIP: ${{ steps.create-zip.outputs.zip-path }}
         RELEASE_REQUIREMENTS: ${{ toJson(steps.parse-config.outputs.release-config.requirements || null) }}
       shell: bash
