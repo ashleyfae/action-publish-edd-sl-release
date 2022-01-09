@@ -26,5 +26,6 @@ runs:
         PRE_RELEASE: ${{ github.event.release.pre_release }}
         RELEASE_ZIP: ${{ steps.create-zip.outputs.zip-path }}
         RELEASE_FILE_NAME: ${{ steps.create-zip.outputs.file-name }}
+        RELEASE_VERSION: ${{ github.event.release.tag_name }}
       shell: bash
       run: ${{ github.action_path }}/release.sh
