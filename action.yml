@@ -9,6 +9,10 @@ inputs:
     description: 'Relative path to your configuration file.'
     required: false
     default: 'edd-sl-release.json'
+  changelog-file:
+    description: 'Relative path to your changelog.'
+    required: false
+    default: 'changelog.txt'
 runs:
   using: 'composite'
   steps:
@@ -27,5 +31,6 @@ runs:
         RELEASE_ZIP: ${{ steps.create-zip.outputs.zip-path }}
         RELEASE_FILE_NAME: ${{ steps.create-zip.outputs.file-name }}
         RELEASE_VERSION: ${{ github.event.release.tag_name }}
+        RELEASE_CHANGELOG: ${{ inputs.changelog-file }}
       shell: bash
       run: ${{ github.action_path }}/release.sh

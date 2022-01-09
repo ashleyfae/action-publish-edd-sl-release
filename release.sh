@@ -26,6 +26,14 @@ else
   release_requirements=''
 fi
 
+if [ -e "$RELEASE_CHANGELOG" ]; then
+  echo "Parsing changelog from ${RELEASE_CHANGELOG}."
+  release_changelog=$( cat ${RELEASE_CHANGELOG} )
+else
+  echo "No changelog found."
+  release_changelog=''
+fi
+
 echo "Version ${RELEASE_VERSION} requirements: ${release_requirements}"
 
 echo "Deploying ${RELEASE_ZIP} to ${WORDPRESS_RELEASE_URL}"
@@ -41,6 +49,7 @@ curl \
   -F "file_name=${RELEASE_FILE_NAME}" \
   -F "pre_release=${PRE_RELEASE}" \
   -F "requirements=${release_requirements}" \
+  -F "changelog=${release_changelog}" \
   "${WORDPRESS_RELEASE_URL}"
 )
 
