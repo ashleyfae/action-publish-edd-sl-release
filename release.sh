@@ -53,11 +53,14 @@ curl \
   "${WORDPRESS_RELEASE_URL}"
 )
 
+echo "API response:"
+echo "${response}"
+
 release_id=$(echo ${response} | jq '.id')
 
 if [ -z "$release_id" ]; then
-  echo "Error response: ${response}"
+  echo "No release ID in response."
   exit 1
 else
-  echo "Successful API response: ${response}"
+  echo "Successfully created release #${release_id}"
 fi
