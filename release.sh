@@ -43,7 +43,7 @@ curl \
   -X POST \
   -H "Content-Type: multipart/form-data" \
   --user "${WORDPRESS_USER}:${WORDPRESS_PASS}" \
-  -s -o api-response.txt -w "%{http_code}" \
+  -s \
   -F "file_zip=@${RELEASE_ZIP}" \
   -F "version=${RELEASE_VERSION}" \
   -F "file_name=${RELEASE_FILE_NAME}" \
@@ -53,14 +53,11 @@ curl \
   "${WORDPRESS_RELEASE_URL}"
 )
 
-content=$(sed '$ d' <<< "$response")
+release_id=$(echo ${response} | jq '.id')
 
-if [[ $response != "201" ]]; then
-  echo "Invalid response code: ${response}"
-  echo "Server response:"
-  cat api-response.txt
+if [ -z "$release_id" ]; then
+  echo "Error response: ${response}"
   exit 1
 else
-  echo "Successful API response:"
-  cat api-response.txt
+  echo "Successful API response: ${response}"
 fi
