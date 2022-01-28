@@ -12,7 +12,7 @@ inputs:
   changelog-file:
     description: 'Relative path to your changelog.'
     required: false
-    default: 'changelog.txt'
+    default: 'changelog.html'
 runs:
   using: 'composite'
   steps:
