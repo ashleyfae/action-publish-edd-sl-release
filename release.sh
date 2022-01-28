@@ -36,14 +36,13 @@ fi
 
 echo "Version ${RELEASE_VERSION} requirements: ${release_requirements}"
 
-echo "Deploying ${RELEASE_ZIP} to ${WORDPRESS_RELEASE_URL}"
+echo "Deploying ${RELEASE_ZIP}"
 
 response=$(
 curl \
   -X POST \
   -H "Content-Type: multipart/form-data" \
   --user "${WORDPRESS_USER}:${WORDPRESS_PASS}" \
-  -s \
   -F "file_zip=@${RELEASE_ZIP}" \
   -F "version=${RELEASE_VERSION}" \
   -F "file_name=${RELEASE_FILE_NAME}" \
