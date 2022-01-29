@@ -56,7 +56,7 @@ echo "${response}"
 
 release_id=$(echo ${response} | jq '.id')
 
-if [[ "$release_id" = null ]]; then
+if [[ -z "$release_id" ]] || [[ "$release_id" = null ]]; then
   echo "No release ID in response."
   exit 1
 else
