@@ -28,7 +28,7 @@ runs:
       env:
         RELEASE_CONFIG: ${{ inputs.config-file }}
         PRE_RELEASE: ${{ github.event.release.pre_release }}
-        ASSET_URL: ${{ steps.upload-asset.outputs.asset-url }}
+        ASSET_URL: ${{ steps.create-zip.outputs.asset-url }}
         RELEASE_FILE_NAME: ${{ steps.create-zip.outputs.file-name }}
         RELEASE_VERSION: ${{ github.event.release.tag_name }}
         RELEASE_CHANGELOG: ${{ inputs.changelog-file }}
