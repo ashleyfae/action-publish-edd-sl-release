@@ -48,12 +48,12 @@ response=$(
 curl \
   -X POST \
   --user "${WORDPRESS_USER}:${WORDPRESS_PASS}" \
-  -F "git_asset_url=${ASSET_URL}" \
-  -F "version=${RELEASE_VERSION}" \
-  -F "file_name=${RELEASE_FILE_NAME}" \
-  -F "pre_release=${PRE_RELEASE}" \
-  -F "requirements=${release_requirements}" \
-  -F "changelog=${release_changelog}" \
+  -d "git_asset_url=${ASSET_URL}" \
+  -d "version=${RELEASE_VERSION}" \
+  -d "file_name=${RELEASE_FILE_NAME}" \
+  -d "pre_release=${PRE_RELEASE}" \
+  -d "requirements=${release_requirements}" \
+  -d "changelog=${release_changelog}" \
   "${WORDPRESS_RELEASE_URL}"
 )
 
