@@ -18,6 +18,12 @@ if [[ -z "$WORDPRESS_RELEASE_URL" ]]; then
   exit 1
 fi
 
+# Ensure we have an asset URL.
+if [[ -z "$ASSET_URL" ]]; then
+  echo "Please supply the ASSET_URL env variable."
+  exit 1
+fi
+
 if [ -e "$RELEASE_CONFIG" ]; then
   echo "Parsing requirements from config."
   release_requirements=$( jq '.requirements' ${RELEASE_CONFIG} )
