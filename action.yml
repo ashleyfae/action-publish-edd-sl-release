@@ -27,7 +27,7 @@ runs:
     - name: Upload release
       env:
         RELEASE_CONFIG: ${{ inputs.config-file }}
-        PRE_RELEASE: ${{ github.event.release.pre_release }}
+        PRE_RELEASE: ${{ github.event.release.prerelease }}
         ASSET_URL: ${{ steps.create-zip.outputs.asset-url }}
         RELEASE_FILE_NAME: ${{ steps.create-zip.outputs.file-name }}
         RELEASE_VERSION: ${{ github.event.release.tag_name }}
