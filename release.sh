@@ -40,7 +40,6 @@ echo "Deploying asset ${ASSET_URL}"
 
 response=$(
 curl \
-  -f \
   -X POST \
   --user "${WORDPRESS_USER}:${WORDPRESS_PASS}" \
   -F "git_asset_url=${ASSET_URL}" \
@@ -57,7 +56,7 @@ echo "${response}"
 
 release_id=$(echo ${response} | jq '.id')
 
-if [ -z "$release_id" ]; then
+if [[ "$release_id" = null ]]; then
   echo "No release ID in response."
   exit 1
 else
