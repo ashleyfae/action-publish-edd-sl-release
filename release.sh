@@ -23,7 +23,7 @@ if [ -e "$RELEASE_CONFIG" ]; then
   release_requirements=$( jq '.requirements' ${RELEASE_CONFIG} )
 else
   echo "No config found; no requirements to parse."
-  release_requirements=''
+  release_requirements=""
 fi
 
 if [ -e "$RELEASE_CHANGELOG" ]; then
@@ -31,19 +31,19 @@ if [ -e "$RELEASE_CHANGELOG" ]; then
   release_changelog=$( cat ${RELEASE_CHANGELOG} )
 else
   echo "No changelog found."
-  release_changelog=''
+  release_changelog=""
 fi
 
 echo "Version ${RELEASE_VERSION} requirements: ${release_requirements}"
 
-echo "Deploying ${RELEASE_ZIP}"
+echo "Deploying asset ${ASSET_URL}"
 
 response=$(
 curl \
+  -f \
   -X POST \
-  -H "Content-Type: multipart/form-data" \
   --user "${WORDPRESS_USER}:${WORDPRESS_PASS}" \
-  -F "file_zip=@${RELEASE_ZIP}" \
+  -F "git_asset_url=${ASSET_URL}" \
   -F "version=${RELEASE_VERSION}" \
   -F "file_name=${RELEASE_FILE_NAME}" \
   -F "pre_release=${PRE_RELEASE}" \
