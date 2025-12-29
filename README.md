@@ -66,10 +66,15 @@ jobs:
         with:
           composer-install: 'true'
 
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
       - name: Publish release to EDD SL
         uses: ashleyfae/action-publish-edd-sl-release@main
         with:
-          asset-url: ${{ steps.build-zip.outputs.asset-browser-download-url }}
+          asset-url: ${{ steps.build-zip.outputs.asset-url }}
           pre-release: ${{ github.event.release.prerelease }}
         env:
           WORDPRESS_USER: ${{ secrets.WORDPRESS_USER }}
@@ -79,6 +84,7 @@ jobs:
 
 **Key Points:**
 - The `id: build-zip` allows you to reference the step's outputs
+- The checkout step ensures `readme.txt` is available for the publish action to parse
 - `asset-browser-download-url` from the build action is passed to `asset-url` in the publish action
 - Both actions run in the same job, so no need for job-level outputs
 
