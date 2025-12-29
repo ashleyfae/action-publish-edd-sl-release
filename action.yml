@@ -1,36 +1,28 @@
 name: 'Publish EDD SL Release'
 description: 'Publishes a new EDD SL release.'
 inputs:
-  composer-install:
-    description: 'Whether to install composer dependencies.'
+  asset-url:
+    description: 'URL to the release zip file.'
+    required: true
+  pre-release:
+    description: 'Whether this is a pre-release.'
     required: false
-    default: 'true'
-  config-file:
-    description: 'Relative path to your configuration file.'
+    default: 'false'
+  readme-file:
+    description: 'Relative path to your readme.txt file.'
     required: false
-    default: 'edd-sl-release.json'
-  changelog-file:
-    description: 'Relative path to your changelog.'
-    required: false
-    default: 'changelog.html'
+    default: 'readme.txt'
 runs:
   using: 'composite'
   steps:
-    # Create zip file and attach to release.
-    - name: Create release zip
-      id: create-zip
-      uses: ashleyfae/action-build-release-zip@main
-      with:
-        composer-install: ${{ inputs.composer-install }}
-
-    # Parse the release config.
-    - name: Upload release
+    - name: Publish release to EDD SL
       env:
-        RELEASE_CONFIG: ${{ inputs.config-file }}
-        PRE_RELEASE: ${{ github.event.release.prerelease }}
-        ASSET_URL: ${{ steps.create-zip.outputs.asset-url }}
-        RELEASE_FILE_NAME: ${{ steps.create-zip.outputs.file-name }}
+        ASSET_URL: ${{ inputs.asset-url }}
+        README_FILE: ${{ inputs.readme-file }}
         RELEASE_VERSION: ${{ github.event.release.tag_name }}
-        RELEASE_CHANGELOG: ${{ inputs.changelog-file }}
+        PRE_RELEASE: ${{ inputs.pre-release }}
+        WORDPRESS_USER: ${{ env.WORDPRESS_USER }}
+        WORDPRESS_PASS: ${{ env.WORDPRESS_PASS }}
+        WORDPRESS_RELEASE_URL: ${{ env.WORDPRESS_RELEASE_URL }}
       shell: bash
-      run: ${{ github.action_path }}/release.sh
+      run: node ${{ github.action_path }}/publish-release.js
