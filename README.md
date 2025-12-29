@@ -41,7 +41,11 @@ You must configure the following secrets in your repository:
 
 ### Complete Workflow
 
-This example shows a complete workflow that creates a release zip and publishes it to your EDD SL Releases API:
+This example shows a complete workflow that creates a release zip and publishes it to your EDD SL Releases API.
+
+The workflow uses two actions in sequence:
+1. `ashleyfae/action-build-release-zip` - Builds the plugin zip and uploads it to the GitHub release
+2. `ashleyfae/action-publish-edd-sl-release` - Publishes release metadata to your EDD SL API
 
 ```yaml
 name: Generate Installable Plugin, and Upload as Release Asset
@@ -52,58 +56,20 @@ on:
 
 jobs:
   build:
-    name: Create Release Zip
+    name: Upload Release Asset
     runs-on: ubuntu-latest
-    outputs:
-      asset-url: ${{ steps.upload.outputs.browser_download_url }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Build project
-        run: |
-          composer install --no-dev --optimize-autoloader
-          mkdir build
-          mkdir ${{ github.event.repository.name }}
-          mv vendor/ ${{ github.event.repository.name }}/
-
-      - name: Create artifact
-        run: |
-          git archive --prefix ${{ github.event.repository.name }}/ -o build/${{ github.event.repository.name }}-${{ github.event.release.name }}.zip HEAD
-
-      - name: Add vendor files
-        uses: montudor/action-zip@v1
+      - name: Build and upload release zip
+        id: build-zip
+        uses: ashleyfae/action-build-release-zip@main
         with:
-          args: zip -ur build/${{ github.event.repository.name }}-${{ github.event.release.name }}.zip ${{ github.event.repository.name }}/
+          composer-install: 'true'
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ github.event.repository.name }}-${{ github.event.release.name }}
-          path: build/${{ github.event.repository.name }}-${{ github.event.release.name }}.zip
-
-      - name: Upload to release
-        id: upload
-        uses: JasonEtco/upload-to-release@master
-        with:
-          args: build/${{ github.event.repository.name }}-${{ github.event.release.name }}.zip application/zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  publish:
-    name: Publish to EDD SL Rleases
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Publish release
+      - name: Publish release to EDD SL
         uses: ashleyfae/action-publish-edd-sl-release@main
         with:
-          asset-url: ${{ needs.build.outputs.asset-url }}
+          asset-url: ${{ steps.build-zip.outputs.asset-browser-download-url }}
           pre-release: ${{ github.event.release.prerelease }}
         env:
           WORDPRESS_USER: ${{ secrets.WORDPRESS_USER }}
@@ -111,29 +77,37 @@ jobs:
           WORDPRESS_RELEASE_URL: ${{ secrets.WORDPRESS_RELEASE_URL }}
 ```
 
-### Minimal Usage
+**Key Points:**
+- The `id: build-zip` allows you to reference the step's outputs
+- `asset-browser-download-url` from the build action is passed to `asset-url` in the publish action
+- Both actions run in the same job, so no need for job-level outputs
 
-If you already have the asset URL from another source:
+### With Custom readme.txt Path
+
+If your readme.txt is in a different location:
 
 ```yaml
 - name: Publish release
   uses: ashleyfae/action-publish-edd-sl-release@main
   with:
-    asset-url: https://github.com/owner/repo/releases/download/v1.0.0/plugin.zip
+    asset-url: ${{ steps.build-zip.outputs.asset-browser-download-url }}
+    readme-file: 'docs/readme.txt'
+    pre-release: ${{ github.event.release.prerelease }}
   env:
     WORDPRESS_USER: ${{ secrets.WORDPRESS_USER }}
     WORDPRESS_PASS: ${{ secrets.WORDPRESS_PASS }}
     WORDPRESS_RELEASE_URL: ${{ secrets.WORDPRESS_RELEASE_URL }}
 ```
 
-### With Custom Paths
+### Standalone Usage
+
+If you already have the asset URL from another workflow or source:
 
 ```yaml
 - name: Publish release
   uses: ashleyfae/action-publish-edd-sl-release@main
   with:
-    asset-url: ${{ needs.build.outputs.asset-url }}
-    readme-file: 'docs/readme.txt'
+    asset-url: https://github.com/owner/repo/releases/download/v1.0.0/plugin.zip
     pre-release: 'false'
   env:
     WORDPRESS_USER: ${{ secrets.WORDPRESS_USER }}
