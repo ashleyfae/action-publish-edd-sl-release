@@ -152,25 +152,22 @@ function escapeHtml(text) {
 
 function makeApiRequest(data, auth) {
   return new Promise((resolve, reject) => {
-    const url = new URL(process.env.WORDPRESS_RELEASE_URL);
-    const protocol = url.protocol === 'https:' ? https : http;
+    const url = process.env.WORDPRESS_RELEASE_URL;
+    const protocol = url.startsWith('https://') ? https : http;
 
-    // Build form data
-    const formData = new URLSearchParams(data).toString();
+    // Build JSON payload
+    const payload = JSON.stringify(data);
 
     const options = {
-      hostname: url.hostname,
-      port: url.port,
-      path: url.pathname + url.search,
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Content-Length': Buffer.byteLength(formData),
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload),
         'Authorization': `Basic ${Buffer.from(`${auth.user}:${auth.pass}`).toString('base64')}`
       }
     };
 
-    const req = protocol.request(options, (res) => {
+    const req = protocol.request(url, options, (res) => {
       let body = '';
 
       res.on('data', (chunk) => {
@@ -195,7 +192,7 @@ function makeApiRequest(data, auth) {
       reject(new Error(`API request error: ${error.message}`));
     });
 
-    req.write(formData);
+    req.write(payload);
     req.end();
   });
 }
@@ -237,7 +234,7 @@ async function main() {
 
     // Add requirements if present
     if (requirements) {
-      requestData.requirements = JSON.stringify(requirements);
+      requestData.requirements = requirements;
     }
 
     console.log(`\nVersion ${process.env.RELEASE_VERSION} requirements:`, requirements || 'none');
