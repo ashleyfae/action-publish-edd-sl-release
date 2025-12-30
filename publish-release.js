@@ -122,6 +122,7 @@ function parseChangelog(filePath) {
       .filter(line => line.length > 0);
 
     if (bulletPoints.length === 0) {
+      console.warn('No bullet points found. Lines: '+lines);
       return '';
     }
 
