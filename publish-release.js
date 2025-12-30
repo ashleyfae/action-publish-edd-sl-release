@@ -167,39 +167,30 @@ function makeApiRequest(data, auth) {
       }
     };
 
-    console.log('\n=== API Request Details ===');
-    console.log('URL:', url);
-    console.log('Method:', options.method);
-    const safeHeaders = { ...options.headers, Authorization: '[REDACTED]' };
-    console.log('Headers:', JSON.stringify(safeHeaders, null, 2));
-    console.log('Data being sent:', data);
-    console.log('JSON payload:', payload);
-    console.log('Payload size:', Buffer.byteLength(payload), 'bytes');
-    console.log('===========================\n');
-
     const req = protocol.request(url, options, (res) => {
       let body = '';
 
       console.log('\n=== API Response ===');
       console.log('Status code:', res.statusCode);
-      console.log('Response headers:', JSON.stringify(res.headers, null, 2));
 
       res.on('data', (chunk) => {
         body += chunk;
       });
 
       res.on('end', () => {
-        console.log('Response body:', body);
-        console.log('====================\n');
 
         if (res.statusCode >= 200 && res.statusCode < 300) {
           try {
             const json = JSON.parse(body);
             resolve(json);
           } catch (error) {
+            console.log('Response body:', body);
+            console.log('====================\n');
             reject(new Error(`Failed to parse API response: ${error.message}`));
           }
         } else {
+          console.log('Response body:', body);
+          console.log('====================\n');
           reject(new Error(`API request failed with status ${res.statusCode}: ${body}`));
         }
       });
