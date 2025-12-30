@@ -15,6 +15,7 @@ function validateEnvironment() {
     WORDPRESS_PASS: 'WordPress API password',
     WORDPRESS_RELEASE_URL: 'WordPress release API endpoint',
     ASSET_URL: 'Release asset URL',
+    FILE_NAME: 'Release file name',
     RELEASE_VERSION: 'Release version'
   };
 
@@ -221,16 +222,9 @@ async function main() {
     // Parse changelog from readme.txt
     const changelog = parseChangelog(process.env.README_FILE);
 
-    // Derive file name from asset URL or version
+    // Get file name and asset URL from environment
     const assetUrl = process.env.ASSET_URL;
-    let fileName = '';
-    try {
-      const urlParts = assetUrl.split('/');
-      fileName = urlParts[urlParts.length - 1];
-    } catch (error) {
-      // Fallback to version-based name
-      fileName = `release-${process.env.RELEASE_VERSION}.zip`;
-    }
+    const fileName = process.env.FILE_NAME;
 
     // Prepare API request data
     const requestData = {

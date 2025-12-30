@@ -15,6 +15,10 @@ A GitHub Action that publishes WordPress plugin releases to an [Easy Digital Dow
 
 URL to the release zip file. This should be the GitHub release asset URL.
 
+### `file-name` (required)
+
+Name of the release zip file (e.g., `my-plugin-1.0.0.zip`).
+
 ### `pre-release` (optional)
 
 Whether this is a pre-release. Defaults to `'false'`.
@@ -75,6 +79,7 @@ jobs:
         uses: ashleyfae/action-publish-edd-sl-release@main
         with:
           asset-url: ${{ steps.build-zip.outputs.asset-url }}
+          file-name: ${{ steps.build-zip.outputs.file-name }}
           pre-release: ${{ github.event.release.prerelease }}
         env:
           WORDPRESS_USER: ${{ secrets.WORDPRESS_USER }}
@@ -96,7 +101,8 @@ If your readme.txt is in a different location:
 - name: Publish release
   uses: ashleyfae/action-publish-edd-sl-release@main
   with:
-    asset-url: ${{ steps.build-zip.outputs.asset-browser-download-url }}
+    asset-url: ${{ steps.build-zip.outputs.asset-url }}
+    file-name: ${{ steps.build-zip.outputs.file-name }}
     readme-file: 'docs/readme.txt'
     pre-release: ${{ github.event.release.prerelease }}
   env:
@@ -114,6 +120,7 @@ If you already have the asset URL from another workflow or source:
   uses: ashleyfae/action-publish-edd-sl-release@main
   with:
     asset-url: https://github.com/owner/repo/releases/download/v1.0.0/plugin.zip
+    file-name: my-plugin-1.0.0.zip
     pre-release: 'false'
   env:
     WORDPRESS_USER: ${{ secrets.WORDPRESS_USER }}
