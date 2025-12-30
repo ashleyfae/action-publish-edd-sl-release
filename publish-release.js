@@ -104,7 +104,8 @@ function parseChangelog(filePath) {
       : remainingContent;
 
     // Find first version block
-    const versionBlockRegex = /^\*\*([^*]+)\*\*\s*$([\s\S]*?)(?=^\*\*|$)/m;
+    // Match: **VERSION** on its own line, then capture everything until next ** or end
+    const versionBlockRegex = /^\*\*([^*]+)\*\*[^\n]*\n([\s\S]*?)(?=\n\*\*|$)/m;
     const match = changelogText.match(versionBlockRegex);
 
     if (!match) {
