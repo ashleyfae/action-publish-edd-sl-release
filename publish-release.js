@@ -104,11 +104,10 @@ function parseChangelog(filePath) {
       : remainingContent;
 
     // Find first version block
-    // Match: **VERSION** on its own line, then capture everything until next ** or end
-    const versionBlockRegex = /^\*\*([^*]+)\*\*[^\n]*\n([\s\S]*?)(?=\n\*\*|$)/m;
+    // Match: **VERSION** followed by content until next ** or end of string
+    // No 'm' flag so $ only matches at true end of string, not at each line ending
+    const versionBlockRegex = /\*\*([^*]+)\*\*[^\n]*\n([\s\S]*?)(?=\n\*\*|$)/;
     const match = changelogText.match(versionBlockRegex);
-
-    console.log('Parsed changelog section: ', match);
 
     if (!match) {
       console.warn('No version entries found in changelog');
@@ -116,6 +115,8 @@ function parseChangelog(filePath) {
     }
 
     const changeItems = match[2].trim();
+
+    console.log('Parsed changelog items: ', changeItems);
 
     // Extract bullet points
     const lines = changeItems.split('\n');
@@ -270,4 +271,14 @@ async function main() {
 }
 
 // Run main function
-main();
+if (process.argv[2] === 'test-changelog') {
+  // Test mode: node publish-release.js test-changelog path/to/readme.txt
+  const testFile = process.argv[3] || 'readme.txt';
+  console.log('Testing changelog parsing with:', testFile);
+  const result = parseChangelog(testFile);
+  console.log('\n=== Parsed Changelog HTML ===');
+  console.log(result);
+  console.log('=============================\n');
+} else {
+  main();
+}
