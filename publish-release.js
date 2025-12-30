@@ -108,6 +108,8 @@ function parseChangelog(filePath) {
     const versionBlockRegex = /^\*\*([^*]+)\*\*[^\n]*\n([\s\S]*?)(?=\n\*\*|$)/m;
     const match = changelogText.match(versionBlockRegex);
 
+    console.log('Parsed changelog section: ', match);
+
     if (!match) {
       console.warn('No version entries found in changelog');
       return '';
@@ -124,7 +126,7 @@ function parseChangelog(filePath) {
       .filter(line => line.length > 0);
 
     if (bulletPoints.length === 0) {
-      console.warn('No bullet points found. Lines: '+lines);
+      console.warn('No bullet points found. Lines: ', lines);
       return '';
     }
 
